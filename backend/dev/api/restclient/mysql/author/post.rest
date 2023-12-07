@@ -1,0 +1,7 @@
+POST http://localhost:8080/authors HTTP/1.1
+content-type: application/json
+
+{
+    "name": "John Doe",
+    "avatarUrl": " https://avatars.githubusercontent.com/u/100000?v=4"
+}

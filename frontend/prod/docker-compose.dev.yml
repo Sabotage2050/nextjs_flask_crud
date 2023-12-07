@@ -1,0 +1,17 @@
+version: '3'
+services:
+  next:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/usr/src/app
+    # command: bash -c " npm run dev"
+    tty: true
+    ports:
+      - "3000:3000"
+    networks:
+      - api_web
+networks:
+  api_web:
+    external: true

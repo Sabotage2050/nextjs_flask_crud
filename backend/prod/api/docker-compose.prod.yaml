@@ -1,0 +1,61 @@
+version: '3'
+
+volumes:
+  gunicorn_socket:
+  data:
+networks:
+  web:
+    driver: bridge
+
+services:
+  nginx:
+    container_name: web
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile.prod
+    ports:
+      - "80:80"
+    networks:
+      - web
+    volumes:
+      - gunicorn_socket:/tmp/gunicorn_socket
+    depends_on:
+      - app
+
+  app:
+    container_name: flask
+    build: 
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - gunicorn_socket:/tmp/gunicorn_socket
+    env_file:
+      - ./.env.prod
+    networks:
+      - web
+    expose:
+      - 8080
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    container_name: db
+    env_file:
+      - ./db/.env.prod
+    # environment:
+      # MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      # MYSQL_ROOT_HOST: "%"
+      # MYSQL_DATABASE: '${DB_DATABASE}'
+      # MYSQL_USER: '${DB_USERNAME}'
+      # MYSQL_PASSWORD: '${DB_PASSWORD}'
+      # MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      # TZ: 'Asia/Tokyo'
+    # command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - 3306:3306
+    networks:
+      - web
+

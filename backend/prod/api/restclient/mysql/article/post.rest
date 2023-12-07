@@ -1,0 +1,9 @@
+POST http://localhost:8080/articles HTTP/1.1
+content-type: application/json
+
+{
+    "title": "tasukete",
+    "content": "content1",
+    "slug": "slug1",
+    "author_id": 1
+}
